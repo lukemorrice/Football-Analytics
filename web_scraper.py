@@ -1,5 +1,8 @@
 import requests
 from bs4 import BeautifulSoup
+import pandas as pd
+import lxml.html as lh
+from tabulate import tabulate
 
 class WebScraper():
 
@@ -24,3 +27,18 @@ class WebScraper():
         # 2. Otherwise, we have been directly transferred to the player's stats page
         else:
             return(r.url)
+
+    # Returns a multiindex column of statistics for a given player
+    def get_df_of_player_stats(self, player_name):
+        r = requests.get(self.get_player_url_page(player_name))
+        soup = BeautifulSoup(r.content, "html.parser")
+        table = soup.find("table", id="stats_standard_ks_dom_lg")
+        req_rows = len(list(table.find("tbody").find_all("tr")))
+        df = pd.read_html(str(table))[0]
+        row_count = df.shape[0]
+        df.drop(df.columns[[1, 3, 5, 28]], axis=1, inplace=True)
+        drop_count = row_count - req_rows
+        df = df.iloc[:drop_count-1]
+        columns = [ ('Details', t2) for (t1, t2) in df.columns.values[:3] ] + list(df.columns.values[3:])
+        df.columns = pd.MultiIndex.from_tuples(columns)
+        return(df)
