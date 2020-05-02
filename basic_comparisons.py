@@ -13,7 +13,9 @@ def xG_xA():
                 ("Lautaro Martinez", 'Serie A', 0.53, 0.09), 
                 ("Timo Werner", 'Bundesliga', 0.62, 0.27)]
 
-    df = pd.DataFrame(players, columns=['name', 'league', 'xG', 'xA'])    
+    print(players)
+    df = pd.DataFrame(players, columns=['name', 'league', 'xG', 'xA'])
+    print(df)
     ax = sns.scatterplot(x="xG", y="xA", hue="league", data=df, s=100)
 
     for player in range(0, df.shape[0]):
@@ -52,4 +54,4 @@ def touches_inpenbox():
     ax.set_title('Unnormalised: Touches vs Percentage of Touches in Opposition Box')
     plt.show()
 
-touches_inpenbox()
+xG_xA()
